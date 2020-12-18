@@ -1,0 +1,10 @@
+If you contribute to the code base (e.g. modify for bug fixes and code cleanup, 
+or add new features), add your info as:
+ 
+@yourName <yourEmail> date 
+
+preferably at the very beginning of the corresponding page.
+
+Please email your code to <somajit@users.sourceforge.net> with the subject line:
+
+Pull Request progrep

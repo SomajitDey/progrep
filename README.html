@@ -1,0 +1,257 @@
+<!doctype HTML><html><head><meta charset="utf-8"><title>Made with Remarkable!</title><link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/styles/github.min.css"><style type='text/css'>body,table tr{background-color:#fff}table tr td,table tr th{border:1px solid #ccc;text-align:left;padding:6px 13px;margin:0}pre code,table,table tr{padding:0}hr,pre code{background:0 0}body{font:16px Helvetica,Arial,sans-serif;line-height:1.4;color:#333;word-wrap:break-word;padding:10px 15px}strong,table tr th{font-weight:700}h1{font-size:2em;margin:.67em 0;text-align:center}h2{font-size:1.75em}h3{font-size:1.5em}h4{font-size:1.25em}h1,h2,h3,h4,h5,h6{font-weight:700;position:relative;margin-top:15px;margin-bottom:15px;line-height:1.1}h1,h2{border-bottom:1px solid #eee}hr{height:0;margin:15px 0;overflow:hidden;border:0;border-bottom:1px solid #ddd}a{color:#4183C4}a.absent{color:#c00}ol,ul{padding-left:15px;margin-left:5px}ol{list-style-type:lower-roman}table tr{border-top:1px solid #ccc;margin:0}table tr:nth-child(2n){background-color:#aaa}table tr td :first-child,table tr th :first-child{margin-top:0}table tr td:last-child,table tr th :last-child{margin-bottom:0}img{max-width:100%}blockquote{padding:0 15px;border-left:4px solid #ccc}code,tt{margin:0 2px;padding:0 5px;white-space:nowrap;border:1px solid #eaeaea;background-color:#f8f8f8;border-radius:3px}pre code{margin:0;white-space:pre;border:none}.highlight pre,pre{background-color:#f8f8f8;border:1px solid #ccc;font-size:13px;line-height:19px;overflow:auto;padding:6px 10px;border-radius:3px}</style></head><body><h1>WHAT IS <em>progrep</em></h1>
+<p><strong>progrep (= progRESS+repORT)</strong> is a utility to show live progress, status and 
+stats of a running simulation or any compute job that executes a given number
+of iterations.</p>
+<p><em>progrep</em> can report for both serial (single-core) and parallel (multi-core/multi-node -
+e.g. OpenMP/MPI) jobs. <em>progrep</em> is cluster-friendly and can access jobs running on a 
+remote machine.</p>
+<p><em>progrep</em> comes in two parts - an executable or command (client) + an API library (server).
+<em>progrep</em> command can only report for those jobs that have the server installed through the
+API. Installation of the server in your source code takes only 4 extra lines (described below).
+To eliminate run-time dependencies, the server/API library is static. Thus, once built/compiled
+on a system with <em>progrep</em> installed, your program would run on another system even if <em>progrep</em>
+is not installed there; only there would be no <em>progrep</em> client to take advantage of the linked
+server. </p>
+<p><em>progrep</em> is lightweight and does not interfere with or slow down your simulation/job
+in any significant way. The <em>progrep</em> server is installed in your code merely as a
+handler for the SIGWINCH signal. The <em>progrep</em> command, when invoked, queries this 
+server as a client by sending a SIGWINCH signal at 1s intervals. The corresponding 
+overhead is insignificant. When the command is not invoked, your simulation 
+is not even aware of the <em>progrep</em> server and hence remains unaffected.</p>
+<p><strong>Copyright (C) 2020 Somajit Dey</strong>
+Department of Physics, University of Calcutta;
+Email: <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#111;&#109;&#97;&#106;&#105;&#116;&#64;&#117;&#115;&#101;&#114;&#115;&#46;&#115;&#111;&#117;&#114;&#99;&#101;&#102;&#111;&#114;&#103;&#101;&#46;&#110;&#101;&#116;">&#115;&#111;&#109;&#97;&#106;&#105;&#116;&#64;&#117;&#115;&#101;&#114;&#115;&#46;&#115;&#111;&#117;&#114;&#99;&#101;&#102;&#111;&#114;&#103;&#101;&#46;&#110;&#101;&#116;</a></p>
+<p><strong>progrep is free software</strong>: you can redistribute it and/or modify it
+under the terms of the <strong>GNU General Public License</strong> as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.</p>
+<p>progrep is distributed in the hope that it will be useful, but
+<strong>WITHOUT ANY WARRANTY</strong>; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.</p>
+<p>You should have received a copy of the GNU General Public License
+along with this program.  If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p>
+<h1>HOW TO BUILD/INSTALL/UNINSTALL <em>progrep</em></h1>
+<p><strong>Installation:</strong> </p>
+<ul>
+<li>
+<p>Download and extract (command: tar xzf) the progrep tarball (.tar.gz).</p>
+</li>
+<li>
+<p>cd to the extracted directory.</p>
+</li>
+<li>
+<p>If needed, set the first 3 variables in the customizable section of the 
+   <strong>Makefile</strong> provided. Then use the command:</p>
+<pre><code>make
+</code></pre>
+<p>and follow the on-screen instructions.</p>
+</li>
+</ul>
+<p><strong>Other relevant commands:</strong></p>
+<pre><code>make clean      # cleaning any previous build
+
+make        # building progrep.mod + libprogrep.a + progrep
+
+make install        # installation
+
+progrep uninstall       # uninstallation
+</code></pre>
+<p>Check your installed version with command:</p>
+<pre><code>progrep     # invoke progrep
+</code></pre>
+<p><strong>Note:</strong> If you have a non-admin user account, you cannot install progrep
+with <em>make install</em>, as above. If <em>progrep</em> is not already installed, it's best
+to ask your system administrator to install the latest version of <em>progrep</em>.
+However, if that is not possible, then you can install <em>progrep</em> for your 
+exclusive use with the command: </p>
+<pre><code>make nonroot    # do this only as last resort
+</code></pre>
+<p>System-wide installation with <em>make install</em> is the most desirable as <em>progrep</em> 
+functions best that way. In any case, for <em>progrep</em> to access tasks running on
+a remote node, <em>progrep</em> needs to be installed (with <em>make install</em> or, atleast
+<em>make nonroot</em>) in that node.</p>
+<p>In case <em>progrep</em> has been installed with both <em>make install</em> and <em>make nonroot</em>,
+only the system-wide installation is taken into account.</p>
+<h1>HOW TO INTEGRATE <em>progrep</em> WITH YOUR CODE</h1>
+<p><strong>progrep API</strong> consists of just two function/procedure calls and three global variables.</p>
+<p>The following <strong>4 steps</strong> are for integration with Fortran/C/C++ code.</p>
+<p>[If your code is in Julia, Python etc., please write your own wrapper. Also consider 
+contributing the same to the progrep code-base (see end-of-file).]</p>
+<p><strong>Step 1: Include module or header</strong> </p>
+<p>FORTRAN -</p>
+<pre><code>USE progrep
+</code></pre>
+<p>C -</p>
+<pre><code>#include &lt;progrep.h&gt;
+</code></pre>
+<p>C++ -</p>
+<pre><code>#include &lt;cprogrep.h&gt;
+</code></pre>
+<p><strong>Step 2: Initialize progrep server before main loop</strong></p>
+<p>Below, nsteps=total number of steps or iterations.</p>
+<p>mpi_rank may be ignored (FORTRAN) or passed as NULL (C/C++) for non-MPI jobs.</p>
+<p>FORTRAN -</p>
+<pre><code>CALL progrep_init(nsteps=,mpi_rank=)    ! Arguments are optional &amp; of default integer kind
+</code></pre>
+<p>C/C++ - </p>
+<pre><code>progrep_init(int *nsteps, int *mpi_rank);   // Parameters may be NULL
+</code></pre>
+<p><strong>Global variable assignment before entering the main loop</strong></p>
+<p>If arguments/parameters were not passed in Step 2 above, then</p>
+<pre><code>progrep_tot = total number of simulation steps or iterations (default integer kind);
+</code></pre>
+<p>Also, for MPI jobs:</p>
+<pre><code>progrep_rank = MPI_Rank (default integer kind);
+</code></pre>
+<p><strong>Step 3: Global variable assignment inside the main loop</strong></p>
+<pre><code>progrep_curr = serial number(index) of current step (iteration) (default integer kind);
+</code></pre>
+<p><strong>Step 4: Terminate progrep server after main loop</strong></p>
+<p>FORTRAN -</p>
+<pre><code>CALL progrep_term
+</code></pre>
+<p>C/C++ - </p>
+<pre><code>progrep_term();
+</code></pre>
+<p>See progrep_sample codes for illustration.
+To get the sample code in your current working directory, use command: progrep sample</p>
+<p><strong>When building executable from your code, follow these simple steps:</strong></p>
+<blockquote>
+<p>(<em>For Fortran only</em>) Make sure the file 'progrep.mod' is in the same directory as your source code. 
+   <em>To get the .mod file in your current working directory, use command</em>: progrep mod</p>
+<p>Link the static library libprogrep.a with -lprogrep</p>
+<p>(<em>For C/C++ only</em>) Assuming progrep was built with gfortran, link the gfortran library with -lgfortran</p>
+</blockquote>
+<p><strong>Example</strong>- Compile the sample codes provided in the samples directory:</p>
+<pre><code>gfortran -o runme samples/progrep_sample.f90 -lprogrep
+
+gcc -o runme samples/progrep_sample.c -lprogrep -lgfortran
+
+g++ -o runme samples/progrep_sample.cpp -lprogrep -lgfortran
+
+gfortran -o runme_omp samples/progrep_sample.f90 -lprogrep -fopenmp
+
+mpicc -o runme_mpi samples/progrep_sample_mpi.c -lprogrep -lgfortran
+</code></pre>
+<p><strong>Note:</strong> If <em>progrep</em> has been installed properly (i.e. using <em>make install</em> or <em>make nonroot</em>), then 
+<em>progrep.h</em>, <em>cprogrep.h</em> and <em>libprogrep.a</em> should be in the default search path of your system. 
+However, if needed, the header files and the library can also be accessed using the command:</p>
+<pre><code>progrep api     # create sub-directory progrep_api containing soft-links to progrep headers, library and modfile
+</code></pre>
+<h1>HOW TO CHECK PROGRESS REPORT OF YOUR SIMULATION/JOB</h1>
+<p>This section describes the key uses of <strong>progrep command</strong>. Help on the command can be accessed anytime with:</p>
+<pre><code>man progrep
+
+progrep help
+</code></pre>
+<p>Get the process ID (PID) of your simulation/job with command:</p>
+<pre><code>progrep list    #List PID of all active simulations that have the progrep server installed.
+                #An empty list means all such simulations/jobs are complete/terminated.
+
+progrep list | grep &lt;user name&gt;     #Lists only those jobs that are run by the specified user
+
+progrep list | grep &lt;name of simulation&gt;    #Lists only those jobs that have the specified name
+</code></pre>
+<p>With this PID, invoke progrep using the command line:</p>
+<pre><code>progrep &lt;PID&gt;
+</code></pre>
+<p><strong>Example</strong>-</p>
+<pre><code>./runme &amp;    # or: ./runme_omp ; or: mpirun -np &lt;#&gt; runme_mpi
+
+progrep list
+
+progrep &lt;PID of runme&gt;
+</code></pre>
+<p><strong>Cluster Jobs / Remote Computing:</strong></p>
+<ul>
+<li>
+<p>For batch jobs submitted via a cluster workload manager (such as SLURM, PBS/Torque etc.), 
+get the list of nodes allocated to your job, from the node-list file whose name is stored in
+the appropriate environment variable, such as: $PBS_NODEFILE ; $SLURM_JOB_NODELIST ;
+$PE_HOSTFILE (for SGE).</p>
+</li>
+<li>
+<p>Assuming progrep is installed (using <em>make install</em> or <em>make nonroot</em>) on a remote node, you 
+can then simply use,</p>
+<pre><code>progrep list [user@]nodename    #Show PID of simulations running on the given node
+
+progrep &lt;PID&gt; [user@]nodename   #Report for a node-local PID
+</code></pre>
+</li>
+</ul>
+<p>progrep accesses the given node through SSH. It therefore, asks for the login password, if 
+password-less login has not been setup (see the SSH man-page for instructions on how to 
+setup password-less remote login, if you are interested).</p>
+<p><strong>Example</strong>-</p>
+<pre><code>progrep list localhost
+
+progrep &lt;PID of runme&gt; $USER@localhost
+</code></pre>
+<p><strong>Note:</strong> To run commands in remote hosts, <em>progrep</em> executes the command-line</p>
+<pre><code>ssh -qt [user@]nodename command
+</code></pre>
+<p>Therefore, it will be affected by changes in ~/.ssh/config or /etc/ssh/ssh_config
+You may thus use these files to configure how the command:</p>
+<pre><code>progrep [list|&lt;PID&gt;] [user@]nodename
+</code></pre>
+<p>behaves. For example, you may set ports in the remote node that ssh shall connect to.
+Or, you may set an alias for a bunch of hostnames so that <em>progrep list alias</em>
+will show progrep-aware processes running in those nodes (password-less login needs
+to be set up for this).
+See SSH_CONFIG(5) [command: man ssh_config] for details on SSH settings.</p>
+<h1>COMMAND LINE ARGUMENTS WHILE EXECUTING YOUR SIMULATION/JOB</h1>
+<p>When executing your simulation from a terminal in the foreground, you can optionally provide the 
+<em>progrep</em> argument that is recognized by the progrep server installed in your code. <em>This argument 
+can be given in any order with respect to any other argument that your program might take. DO NOT 
+use this argument for MPI jobs.</em></p>
+<p><strong>Argument option:</strong> </p>
+<pre><code>progrep     ---enables interactive mode. progrep can be invoked simply by pressing Ctrl and C together
+</code></pre>
+<p><strong>Example</strong>: </p>
+<pre><code>./runme progrep
+</code></pre>
+<h1>FRAMES PER SECOND (FPS) and TIME REMAINING (ETA)</h1>
+<p>progrep shows three types   of FPS: Current, Recent and CPU. </p>
+<p><strong>Current</strong> shows average FPS sampled over the last 1 second duration. </p>
+<p><strong>Recent</strong> shows average FPS since progrep was invoked. </p>
+<p><strong>CPU</strong> shows average FPS sampled over total cpu time (as opposed to wall-clock time) for the last 1s (wall-clock) duration. </p>
+<p><em>Two competing algorithms may be compared for speed (performance) in terms of the Current FPS and/or the CPU FPS.</em> </p>
+<p><strong>ETA</strong>, or the time remaining for the simulation to complete, is estimated based on the Recent FPS and the 
+number of frames remaining. The estimate is reasonably accurate only when the simulation is expected to 
+run with almost uniform speed, i.e. if Current FPS does not fluctuate widely with time.</p>
+<h1>STATS &amp; STATUS</h1>
+<p><em>progrep</em> shows the following for a running process:</p>
+<p><strong>Percentage Completed</strong></p>
+<p><strong>Time Elasped</strong> (Wall-clock time elapsed since process called progrep_init)</p>
+<p><strong>ETA</strong></p>
+<p><strong>FPS</strong></p>
+<p><strong>Number Of Threads</strong> (Useful for simulations using openmp, posix threads etc.)</p>
+<p><strong>Mpi_Rank (If Any)</strong> (Useful for MPI simulations)</p>
+<p><strong>Cpu Usage (%)</strong> (Per thread for multithreaded processes)</p>
+<p><strong>Current Status Of Your Simulation</strong> (Running, Puased/Waiting, Complete/Terminated)</p>
+<p><strong>Start Time &amp; Date</strong></p>
+<p><strong>Name Of The Process</strong></p>
+<p><strong>User@Hostname Under Which Process Is Running</strong></p>
+<p><strong>Working Directory Of The Process</strong> (Shows current working directory of the process when it called progrep_init)</p>
+<p>In addition, the logfile (see below) includes the following information:</p>
+<p><strong>Command-Line Used To Launch The Process</strong></p>
+<p><strong>Total Cpu Time Taken</strong> (Maybe useful in evaluating scaling benefits for multithreaded processes)</p>
+<p>If more features are desired, feel free to send a feature request (see at the end of this file).</p>
+<h1>LOGFILE</h1>
+<p>progrep's report can be logged against time-stamp with the <strong>hotkey</strong>: Ctrl+\ (i.e. press Ctrl and \ keys together)</p>
+<p>In the log file, the total processor time taken so far by the simulation is provided. 
+For multi-threaded (parallel) simulations, this time roughly corresponds to its single-threaded (serial) counterpart.</p>
+<p>*The logfile is created in the current working directory of the invoker and is titled progrep.log_</p>
+<h1>BUG-REPORT / QUERY / FEEDBACK / CONTRIBUTION</h1>
+<p><strong>Please report bugs at</strong> <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#115;&#111;&#109;&#97;&#106;&#105;&#116;&#64;&#117;&#115;&#101;&#114;&#115;&#46;&#115;&#111;&#117;&#114;&#99;&#101;&#102;&#111;&#114;&#103;&#101;&#46;&#110;&#101;&#116;">&#115;&#111;&#109;&#97;&#106;&#105;&#116;&#64;&#117;&#115;&#101;&#114;&#115;&#46;&#115;&#111;&#117;&#114;&#99;&#101;&#102;&#111;&#114;&#103;&#101;&#46;&#110;&#101;&#116;</a> with the subject line: </p>
+<pre><code>progrep &lt;version number&gt;
+</code></pre>
+<p>Submit feature requests with the subject line: </p>
+<pre><code>progrep feature
+</code></pre>
+<p><strong>For any query</strong> related to this software, email with the subject line: </p>
+<pre><code>progrep query &lt;version number&gt;
+</code></pre>
+<p>Users' feedback is the developers' reward. If progrep helps you in your work, kindly drop a line at the above-mentioned email address. Constructive criticism is also welcome.</p>
+<p><strong>To contribute</strong> to the code-base, please refer to notice.txt in the src directory.</p><script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.1/highlight.min.js"></script><script>hljs.initHighlightingOnLoad();</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/javascript">MathJax.Hub.Config({"showProcessingMessages" : false,"messageStyle" : "none","tex2jax": { inlineMath: [ [ "$", "$" ] ] }});</script></body></html>

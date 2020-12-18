@@ -1,0 +1,53 @@
+ Progrep reports the current status of MD or MC simulations, or,
+ any long compute job performing a given number of iterations
+
+ Usage: progrep [list | <PID> | mod | sample | api | help | license | uninstall]
+ For job running on remote host: progrep [list | <PID>] [user@]hostname
+
+ Options:
+ 
+            --version and other info
+            
+ list       --list PID (process ID) of all active simulations 
+              that have the progrep server installed. An empty 
+              list means all such simulations/jobs are complete
+              /terminated.    
+ 
+ <pid>      --show progress report for simulation/job with 
+              process ID = <PID> 
+ 
+ mod        --create link for progrep.mod in current directory
+           
+ sample     --create link for sample code in current directory
+           
+ api        --create a sub-directory within your current directory
+              containing the headers, library & modfile necessary
+              for building/compiling code that uses the progrep API
+
+ help       --show this help
+              
+ license    --show license for the installed distribution of progrep
+ 
+ uninstall  --uninstall progrep if installed properly
+ 
+
+ ##### For jobs running on Cluster / Remote node(s)
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Access the list of nodes your job is running on. Then:
+ 
+ progrep [list | <PID>] [user@]nodename
+
+
+ ##### API: How to Install progrep's Server in Your Code
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+ Look up sample code generated with command: progrep sample
+ 
+
+ ##### (Optional) Interactive Mode for non-MPI jobs
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Run your simulation/job with command-line argument: progrep
+
+ Example: ./simulation.bin progrep
+
+ Note: If your program takes other arguments, the progrep 
+ argument may be provided in any order with respect to those                     
