@@ -84,15 +84,11 @@ if(isInstalled)then
     WRITE(testDir,'(I0,A,I0)')f_time(),'progrep',f_getpid() !This gives a unique name(as only one proc at any given time & PID)
     testDir=TRIM(ADJUSTL(from_settings))//'/'//TRIM(ADJUSTL(testDir))
     CALL f_mkdir(TRIM(ADJUSTL(testDir)),'777',testResult)
-    if(testResult==0)then
-        default_tmpdir=.FALSE.
-        tmpdir=TRIM(ADJUSTL(from_settings))//'/'//'progrep' !User-given directory has write permission. Keep it
-    else
-        tmpdir='/tmp/'//'progrep' !Otherwise, default to /tmp. Not risking $TMPDIR as it can be set to be job-specific by scheduler
-    endif        
+    if(testResult==0)default_tmpdir=.FALSE. !User-given directory has write permission. Keep it
     CALL f_rmdir(TRIM(ADJUSTL(testDir)),testResult)
 endif
 
+tmpdir=TRIM(ADJUSTL(from_settings))//'/'//'progrep'
 ! Finally create progrep subdirectory in the scratch space such that any progrep client or server may access, read or write
 CALL f_mkdir(TRIM(ADJUSTL(tmpdir)),'777',dummy_return) !Create progrep dir; no side-effect if dir already exists
 CALL f_chmod(TRIM(ADJUSTL(tmpdir)),'777',dummy_return) !Make dir rwx for all. r(for ls),w(for unlink),x(for file access)

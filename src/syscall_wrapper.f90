@@ -270,11 +270,11 @@ interface
    end subroutine c_nanosleep   
 end interface
 
-f_req%tv_sec=s
-f_req%tv_nsec=ns
+f_req%tv_sec=int(s,kind=c_long)
+f_req%tv_nsec=int(ns,kind=c_long)
 call c_nanosleep(f_req,f_rem)
-rem_s=f_rem%tv_sec
-rem_ns=f_rem%tv_nsec
+rem_s=int(f_rem%tv_sec,kind=int32)
+rem_ns=int(f_rem%tv_nsec,kind=int32)
 end subroutine f_nanosleep
 
 subroutine f_gethostname(str)
