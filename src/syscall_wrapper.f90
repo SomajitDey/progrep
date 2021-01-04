@@ -1,4 +1,4 @@
-!@Somajit Dey <somajit@users.sourceforge.net> 14 December 2020
+!@Somajit Dey <somajit@users.sourceforge.net> 4 January 2021
 !
 ! Copyright (C) 2020 Somajit Dey
 ! Department of Physics, University of Calcutta
@@ -248,13 +248,15 @@ end subroutine f_getcwd
 
 function f_time()
 integer(int32) :: f_time
+integer(c_long) ::f_time_c_long 
 interface
    subroutine c_time(tloc) bind(c,name='time')
    import :: c_long
    integer(c_long) :: tloc
    end subroutine c_time
 end interface
-call c_time(f_time)   
+call c_time(f_time_c_long)
+f_time=int(f_time_c_long,kind(f_time))   
 end function f_time
 
 subroutine f_nanosleep(s,ns,rem_s,rem_ns)

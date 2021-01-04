@@ -1,5 +1,5 @@
  This file is part of progrep
- Version 2.0 << December,2020
+ Version 2.1 << January,2021
  Repository: <https://sourceforge.net/projects/progrep/>
  Feedback & bug-report: <somajit@users.sourceforge.net>
  Copyright (C) 2020 Somajit Dey

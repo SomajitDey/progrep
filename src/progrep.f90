@@ -1,4 +1,4 @@
-!@Somajit Dey <somajit@users.sourceforge.net> 14 December 2020
+!@Somajit Dey <somajit@users.sourceforge.net> 4 January 2021
 !
 ! Copyright (C) 2020 Somajit Dey
 ! Department of Physics, University of Calcutta
@@ -113,7 +113,7 @@ CALL EXECUTE_COMMAND_LINE('ps -p '//pidSim_char//' -o nlwp= > '//storeFile//' 2>
 OPEN(NEWUNIT=storeUnit,FILE=storeFile)
 READ(storeUnit,'(I6)',IOSTAT=istat)threadNum
 if(istat/=0) then
-   PRINT*,
+   write(*,*)
    PRINT('(A)'), '  Status: Complete/terminated'
    CALL graceful_exit(0)
 endif
@@ -147,7 +147,7 @@ if ((totSteps.NE.0).AND.(currStep.NE.0))then
       CALL sec2HMS(0.,ETAhrs,ETAmins,ETAsecs)
    endif
    
-   PRINT*,
+   write(*,*)
 elseif(currStep==0)then
    if (NINT(execTime-initTime)<5)then
       CALL EXECUTE_COMMAND_LINE('tput -Txterm smso') !Switch on stand-out mode in terminal
@@ -157,12 +157,12 @@ elseif(currStep==0)then
       CALL EXECUTE_COMMAND_LINE('tput -Txterm smso') !Switch on stand-out mode in terminal
       PRINT('(A)'),'  Timeout! progrep is quitting. Reinvoke later if necessary'
       CALL EXECUTE_COMMAND_LINE('tput -Txterm rmso') ! Switch off stand-out mode in terminal
-      PRINT*,
-      PRINT*,
+      write(*,*)
+      write(*,*)
       PRINT('(A)'),'  Either your simulation took too long to initialize'
-      PRINT*,
+      write(*,*)
       PRINT('(A)'),'  Or,'
-      PRINT*,
+      write(*,*)
       if (totSteps/=0)then
          PRINT('(A)'),'  You did not assign progrep_curr in your code'
       else
@@ -195,17 +195,17 @@ SUBROUTINE progrep_display
 
 !  Display progress bar and stats
    PRINT(displayFormat),'  [',displayBar,']'
-   PRINT*,
+   write(*,*)
    PRINT('(2X,I3,A,10X,I0,A,I0,1X,A)'),percentage,'% complete',currStep,'/',totSteps,'steps'
-   PRINT*,
+   write(*,*)
    PRINT('(2X,A,1X,I3,1X,A,2(1X,I2,1X,A))'),'Elapsed  :',goneHrs,'hrs',goneMins,'mins',goneSecs,'secs'
-   PRINT*,
+   write(*,*)
    PRINT('(2X,A,1X,I3,1X,A,2(1X,I2,1X,A),1X,A)'),'Remaining:',ETAhrs,'hrs',ETAmins,'mins',ETAsecs,'secs','(approx.)'
-   PRINT*,
+   write(*,*)
    PRINT('(2X,A,3(1X,F7.2,1X,A))'),'FPS:',currFPS,'Current ||',recentFPS,'Recent ||',FPS_CPU,'CPU'
-   PRINT*,
+   write(*,*)
    PRINT('(2X,A,1X,I0,10X,A,1X,F5.1,A)'),'# Threads:',threadNum,'CPU/Thread:',cpuUsage/threadNum,'%'
-   PRINT*,
+   write(*,*)
 END SUBROUTINE progrep_display
 
 Subroutine flash_status
@@ -213,7 +213,7 @@ if((currStep.ne.oldStep).AND.(totSteps/=0))then
    if(mod(counter,2)==1)then
       print('(A)'),'  Status: Running'
    else
-      print*,' Status: '   
+      write(*,*)' Status: '   
    endif
 else
    if(totSteps==0)then
@@ -231,7 +231,7 @@ else
          endif      
    endif   
 endif
-print*,            
+write(*,*)            
 oldStep=currStep
 old_cpuSecs=cpuSecs
 End Subroutine flash_status
@@ -252,6 +252,7 @@ integer :: logfileUnit,readStat,writeStat
 
 WRITE(intro,'(a,1x,a)')'Started:',TRIM(ADJUSTL(Sim_start_expanded))
 
+CALL EXECUTE_COMMAND_LINE('touch '//TRIM(ADJUSTL(logfileName))) !This is just a workaround for WSL
 OPEN(NEWUNIT=logfileUnit,FILE=TRIM(ADJUSTL(logfileName)),STATUS='UNKNOWN',FORM='FORMATTED', ACCESS='SEQUENTIAL', &
 ACTION='READ',IOSTAT=readStat)
 READ(logfileUnit,'(a)',IOSTAT=readStat)record
@@ -278,7 +279,7 @@ CLOSE(logfileUnit)
 if(ssh_session)then
     CALL graceful_exit(3)
 else
-    PRINT*,
+    write(*,*)
     if(writeStat==0)then
         PRINT('(A,1X,A)'),TRIM(ADJUSTL(logfileName)),'has been generated in your current directory.'
     else
@@ -297,14 +298,14 @@ CALL f_unlink(storeFile,dummy_return)
 CALL EXECUTE_COMMAND_LINE('tput -Txterm cnorm') !Bring cursor back to normal
 
 if(isInstalled.AND.default_tmpdir)then
-    PRINT*,
-    PRINT*,'Warning: @'//TRIM(ADJUSTL(hostNode))
-    PRINT*,'progrep could not create tmpfiles in LOCAL_SCRATCH that was provided during progrep installation (through Makefile).'
-    PRINT*,'Hence it used /tmp instead.'
+    write(*,*)
+    write(*,*)'Warning: @'//TRIM(ADJUSTL(hostNode))
+    write(*,*)'progrep could not create tmpfiles in LOCAL_SCRATCH that was provided during progrep installation (in Makefile).'
+    write(*,*)'Hence it used /tmp instead.'
 endif
 
 if(sigVal==0)then
-   PRINT*,
+   write(*,*)
    PRINT('(A)'),'  Press Enter to exit progrep'
    READ*,
 elseif(sigVal==3)then
@@ -381,9 +382,9 @@ if(argCount.NE.0)then
     case('mod')
         if(isInstalled)then
             CALL f_symlink(TRIM(ADJUSTL(folder))//modfile,modfile,linkStat)
-            PRINT*,modfile//' has been created in your current working directory'
+            write(*,*)modfile//' has been created in your current working directory'
         else
-            PRINT*,'Sorry cannot help'
+            write(*,*)'Sorry cannot help'
         endif
         STOP
     
@@ -395,17 +396,17 @@ if(argCount.NE.0)then
             CALL f_symlink(TRIM(ADJUSTL(folder))//cheader,api//cheader,linkStat)
             CALL f_symlink(TRIM(ADJUSTL(folder))//lib,api//lib,linkStat)
             if(linkStat==0)then
-                PRINT*,'Check out '//api//' in the current directory'
+                write(*,*)'Check out '//api//' in the current directory'
             else
                 INQUIRE(FILE=api//lib,EXIST=wasThere)
                 if(wasThere)then
-                    PRINT*,'Come on, progrep_api/ was already there in your current directory !!'
+                    write(*,*)'Come on, progrep_api/ was already there in your current directory !!'
                 else
-                    PRINT*,'Failed: Permission denied (write-protected directory). cd to elsewhere & retry'
+                    write(*,*)'Failed: Permission denied (write-protected directory). cd to elsewhere & retry'
                 endif
             endif
         else
-            PRINT*,'Sorry cannot help'
+            write(*,*)'Sorry cannot help'
         endif        
         STOP
        
@@ -416,18 +417,18 @@ if(argCount.NE.0)then
             CALL f_symlink(TRIM(ADJUSTL(folder))//sample//'_mpi'//ext_c,sample//'_mpi'//ext_c,linkStat)
             CALL f_symlink(TRIM(ADJUSTL(folder))//sample//ext_c,sample//ext_c,linkStat)
             CALL f_symlink(TRIM(ADJUSTL(folder))//sample//ext_cpp,sample//ext_cpp,linkStat)
-            PRINT*,sample//' has been created in your current working directory'
+            write(*,*)sample//' has been created in your current working directory'
         else
-            PRINT*,'Sorry cannot help'
+            write(*,*)'Sorry cannot help'
         endif
         STOP
         
     case('help')
         if(isInstalled)then
-            PRINT*,
+            write(*,*)
             CALL EXECUTE_COMMAND_LINE('cat '//TRIM(ADJUSTL(folder))//help)
         else
-            PRINT*,'Sorry cannot help'
+            write(*,*)'Sorry cannot help'
         endif
         STOP
         
@@ -435,8 +436,8 @@ if(argCount.NE.0)then
         if(isInstalled)then
             CALL EXECUTE_COMMAND_LINE('less '//TRIM(ADJUSTL(folder))//license)
         else
-            PRINT*,'GNU Public License version 3 or later'
-            PRINT*,'Available at <https://www.gnu.org/licenses/>'
+            write(*,*)'GNU Public License version 3 or later'
+            write(*,*)'Available at <https://www.gnu.org/licenses/>'
         endif
         STOP
 
@@ -449,7 +450,7 @@ if(argCount.NE.0)then
                 CALL EXECUTE_COMMAND_LINE('make uninstall')
             endif    
         else
-            PRINT*,'What is there to uninstall? Have you even installed me properly!'
+            write(*,*)'What is there to uninstall? Have you even installed me properly!'
         endif
         STOP
       
@@ -499,7 +500,7 @@ if(argCount.NE.0)then
                         CALL f_rename(TRIM(ADJUSTL(storeFile)),TRIM(ADJUSTL(logfileName)),logfileStat)
                     endif
                 endif
-                PRINT*,
+                write(*,*)
                 if(logfileStat==0)then
                     PRINT('(A,1X,A)'),TRIM(ADJUSTL(logfileName)),'has been generated in your current directory.'
                 else
@@ -511,19 +512,19 @@ if(argCount.NE.0)then
      endif
        CALL validation(pidSim_char,SimExists)
        if(.NOT.SimExists)then
-          PRINT*,'ERROR'
-          PRINT*,'Possible Reasons:' 
-          PRINT*,'a) You gave the wrong PID' 
-          PRINT*,'   (Get proper PID using command: progrep list)' 
-          PRINT*,'b) Your simulation has terminated, or, its progrep cookie has been deleted' 
-          PRINT*,'   (Is given PID shown with: progrep list)'
-          PRINT*,'c) progrep server is not installed for the given process' 
-          PRINT*,'   (See sample code for how-to; command: progrep sample)'
+          write(*,*)'ERROR'
+          write(*,*)'Possible Reasons:' 
+          write(*,*)'a) You gave the wrong PID' 
+          write(*,*)'   (Get proper PID using command: progrep list)' 
+          write(*,*)'b) Your simulation has terminated, or, its progrep cookie has been deleted' 
+          write(*,*)'   (Is given PID shown with: progrep list)'
+          write(*,*)'c) progrep server is not installed for the given process' 
+          write(*,*)'   (See sample code for how-to; command: progrep sample)'
           CALL graceful_exit(2)
        endif   
        CALL f_kill(pidSim,0,sigErr)
        if(sigErr/=0)then
-          PRINT*,'Permission denied. Invoke progrep as root: sudo progrep <pid>'
+          write(*,*)'Permission denied. Invoke progrep as root: sudo progrep <pid>'
           CALL graceful_exit(2)
        endif   
        Sim_USER=TRIM(ADJUSTL(Sim_USER))//'@'//TRIM(ADJUSTL(hostNode))
@@ -537,9 +538,9 @@ if(argCount.NE.0)then
        CALL EXECUTE_COMMAND_LINE('tput -Txterm smso ; tput -Txterm civis') !Switch on stand-out mode in terminal & Hide cursor
        CALL two_col_display('Name: '//ADJUSTL(name_Sim),'Started: '//ADJUSTL(Sim_start_expanded),display_width)
        if(mpiRank.ge.0)then
-         WRITE(num_to_char,'(a,1X,I0)'),'MPI_Rank:',mpiRank
+         WRITE(num_to_char,'(a,1X,I0)')'MPI_Rank:',mpiRank
        else
-         WRITE(num_to_char,'(a,1X,a)'),'MPI_Rank:','N/A'
+         WRITE(num_to_char,'(a,1X,a)')'MPI_Rank:','N/A'
        endif
        CALL two_col_display('Owner: '//ADJUSTL(Sim_USER),ADJUSTL(num_to_char),display_width)
        CALL two_col_display('Dir: '//ADJUSTL(wdir_Sim),' ',display_width)
@@ -548,13 +549,13 @@ if(argCount.NE.0)then
    endselect
 else
    if(isInstalled)then
-       PRINT*,
+       write(*,*)
        CALL EXECUTE_COMMAND_LINE('awk ''NR==1, NR==5 {print}'' '//TRIM(ADJUSTL(folder))//help)
-       PRINT*,
+       write(*,*)
        CALL EXECUTE_COMMAND_LINE('awk ''NR==2, NR==7 {print}'' '//TRIM(ADJUSTL(folder))//version)
-       PRINT*,
+       write(*,*)
    else
-       PRINT*,'Hello, this is progrep. Please install me properly using: make ; make install or make nonroot'
+       write(*,*)'Hello, this is progrep. Please install me properly using: make ; make install or make nonroot'
    endif    
    STOP
 endif    
@@ -627,6 +628,6 @@ character(len=6) :: format_specifier
 WRITE(format_specifier,'(A,I0,A)')"(A",display_width,")"
 space=display_width-LEN_TRIM(ADJUSTL(TRIM(string1)//ADJUSTL(string2)))
 if(space.le.0)space=1
-WRITE(*,format_specifier),TRIM(ADJUSTL(string1))//REPEAT(' ',space)//TRIM(ADJUSTL(string2))
+WRITE(*,format_specifier)TRIM(ADJUSTL(string1))//REPEAT(' ',space)//TRIM(ADJUSTL(string2))
 End Subroutine two_col_display
 End Program progrep
