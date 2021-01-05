@@ -90,11 +90,11 @@ nonroot:
 	@install -v -t ${NONROOT_INSTALL_PATH} version_info.txt extra/usage.txt ${CONFIG_FILE}
 	@install -v -t ${NONROOT_INSTALL_PATH}/ headers/*.h
 	@cat extra/progrep.sh >> ${HOME}/.bashrc
-	@echo 'export PATH=${PATH}:'${NONROOT_INSTALL_PATH} >> ${HOME}/.bashrc
-	@echo 'export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:'${NONROOT_INSTALL_PATH} >> ${HOME}/.bashrc #For ld linker
-	@echo 'export LIBRARY_PATH=${LIBRARY_PATH}:'${NONROOT_INSTALL_PATH} >> ${HOME}/.bashrc #For GCC
-	@echo 'export C_INCLUDE_PATH=${C_INCLUDE_PATH}:'${NONROOT_INSTALL_PATH} >> ${HOME}/.bashrc #For gcc
-	@echo 'export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:'${NONROOT_INSTALL_PATH} >> ${HOME}/.bashrc #For g++
+	@echo 'export PATH=$${PATH}:'${NONROOT_INSTALL_PATH} >> ${HOME}/.bashrc
+	@echo 'export LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:'${NONROOT_INSTALL_PATH} >> ${HOME}/.bashrc #For ld linker
+	@echo 'export LIBRARY_PATH=$${LIBRARY_PATH}:'${NONROOT_INSTALL_PATH} >> ${HOME}/.bashrc #For GCC
+	@echo 'export C_INCLUDE_PATH=$${C_INCLUDE_PATH}:'${NONROOT_INSTALL_PATH} >> ${HOME}/.bashrc #For gcc
+	@echo 'export CPLUS_INCLUDE_PATH=$${CPLUS_INCLUDE_PATH}:'${NONROOT_INSTALL_PATH} >> ${HOME}/.bashrc #For g++
 	@echo
 	@echo 'progrep has been installed for:' ${USER}
 	@echo 'Installation directory:' ${NONROOT_INSTALL_PATH}

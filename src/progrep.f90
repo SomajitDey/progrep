@@ -331,7 +331,7 @@ CALL EXECUTE_COMMAND_LINE('tput -Txterm cuu 17 ; tput -Txterm ed') !Move cursor 
 End Subroutine clearDisplay
 
 Subroutine progrep_config
-character(len=*) , parameter :: api='progrep_api/',prefix_cmd='export PATH=$PATH:$HOME/progrep_installation && progrep '
+character(len=*) , parameter :: api='progrep_api/',prefix_cmd='export PATH=\$PATH:\$HOME/progrep_installation && progrep '
 character(len=*) , parameter :: version='version_info.txt',help='usage.txt',license='COPYING'
 character(len=*) , parameter :: modfile='progrep.mod',sample='progrep_sample',ext_f='.f90',ext_c='.c',ext_cpp='.cpp'
 character(len=*) , parameter :: header='progrep.h',cheader='cprogrep.h',lib='libprogrep.a' 
