@@ -227,8 +227,8 @@ can then simply use,
 		progrep <PID> [user@]nodename	#Report for a node-local PID
 	
 progrep accesses the given node through SSH. It therefore, asks for the login password, if 
-password-less login has not been setup (see the SSH man-page for instructions on how to 
-setup password-less remote login, if you are interested).
+password-less login has not been setup. (To set up password-less login, use the following 
+commands in succession: ssh-keygen ; ssh-copy-id user@nodename).
 
 **Example**-
 
