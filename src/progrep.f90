@@ -33,6 +33,18 @@
 ! Much use has been made of the intrinsic procedure 'execute_command_line' 
 ! below in view of the low memory footprint and cpu usage of the progrep 
 ! client.
+
+! WSL:
+! There are a few workarounds for Windows Subsystem for Linux. Find them with
+! the keyword WSL. Apparently, WSL creates a 'fort.<unitnumber>' file everytime
+! there is a file opening error (such as open(newunit=<unitnumber>,file=<path>,
+! status='OLD or 'UNKNOWN'',IOSTAT=)) for a file that does not yet exist, and 
+! attaches unit=<unitnumber> with the fort file.
+
+! SIGSEGV RUNTIME ERROR:
+! Any such error possibly arises from type mismatch when porting from 32-bit to 
+! 64-bit. E.g. equating INT32 with C_LONG variable type. C_LONG can take both 32-bit
+! and 64-bit form depending on the implementation.
 !************************************************************************
 
 Program progrep
@@ -488,17 +500,14 @@ if(argCount.NE.0)then
                 OPEN(NEWUNIT=storeUnit,FILE=storeFile)
                 READ(storeUnit,'(a)')started_remote_log
                 CLOSE(storeUnit)
-                OPEN(NEWUNIT=logfileUnit,FILE=logfileName,STATUS='old',IOSTAT=readStat)
+                CALL EXECUTE_COMMAND_LINE('touch '//TRIM(ADJUSTL(logfileName))) !This is just a workaround for WSL
+				OPEN(NEWUNIT=logfileUnit,FILE=logfileName,STATUS='old',IOSTAT=readStat)
                 READ(logfileUnit,'(a)',IOSTAT=readStat)started_local_log
                 CLOSE(logfileUnit)
-                if(readStat.NE.0)then
-                    CALL f_rename(TRIM(ADJUSTL(storeFile)),TRIM(ADJUSTL(logfileName)),logfileStat)
+                if((readStat==0).AND.(started_remote_log==started_local_log))then
+                    CALL EXECUTE_COMMAND_LINE('tail -1 '//TRIM(ADJUSTL(storeFile))//' >> '//logfileName,EXITSTAT=logfileStat)
                 else
-                    if(started_remote_log==started_local_log)then
-                        CALL EXECUTE_COMMAND_LINE('tail -1 '//TRIM(ADJUSTL(storeFile))//' >> '//logfileName,EXITSTAT=logfileStat)
-                    else
-                        CALL f_rename(TRIM(ADJUSTL(storeFile)),TRIM(ADJUSTL(logfileName)),logfileStat)
-                    endif
+					CALL f_rename(TRIM(ADJUSTL(storeFile)),TRIM(ADJUSTL(logfileName)),logfileStat)
                 endif
                 write(*,*)
                 if(logfileStat==0)then
