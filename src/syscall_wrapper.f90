@@ -29,6 +29,11 @@
 !
 ! These module procedures and interfaces basically bind to functions in 
 ! the glibc library that ships with Linux.
+
+! SIGSEGV RUNTIME ERROR:
+! Any such error possibly arises from type mismatch when porting from 32-bit to 
+! 64-bit. E.g. equating INT32 with C_LONG variable type. C_LONG can take both 32-bit
+! and 64-bit form depending on the implementation.
 !************************************************************************
 
 !************************************************************************
