@@ -264,7 +264,7 @@ integer :: logfileUnit,readStat,writeStat
 
 WRITE(intro,'(a,1x,a)')'Started:',TRIM(ADJUSTL(Sim_start_expanded))
 
-CALL EXECUTE_COMMAND_LINE('touch '//TRIM(ADJUSTL(logfileName))//' 2&>/dev/null') !Just a workaround for WSL
+CALL EXECUTE_COMMAND_LINE('touch '//TRIM(ADJUSTL(logfileName))//' > /dev/null 2>&1') !Just a workaround for WSL
 OPEN(NEWUNIT=logfileUnit,FILE=TRIM(ADJUSTL(logfileName)),STATUS='UNKNOWN',FORM='FORMATTED', ACCESS='SEQUENTIAL', &
 ACTION='READ',IOSTAT=readStat)
 READ(logfileUnit,'(a)',IOSTAT=readStat)record
@@ -500,7 +500,7 @@ if(argCount.NE.0)then
                 OPEN(NEWUNIT=storeUnit,FILE=storeFile)
                 READ(storeUnit,'(a)')started_remote_log
                 CLOSE(storeUnit)
-                CALL EXECUTE_COMMAND_LINE('touch '//TRIM(ADJUSTL(logfileName))//' 2&>/dev/null') !Just a workaround for WSL
+                CALL EXECUTE_COMMAND_LINE('touch '//TRIM(ADJUSTL(logfileName))//' > /dev/null 2>&1') !Just a workaround for WSL
 				OPEN(NEWUNIT=logfileUnit,FILE=logfileName,STATUS='old',IOSTAT=readStat)
                 READ(logfileUnit,'(a)',IOSTAT=readStat)started_local_log
                 CLOSE(logfileUnit)
